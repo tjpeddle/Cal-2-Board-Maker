@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculus 2 AAC Board Editor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --border: #e0e0e0;
+    --text: #1a1a1a;
+    --text-dim: #666;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --success: #16a34a;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: #1e293b;
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .topbar h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .topbar-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #15803d; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: var(--danger-hover); }
+  .btn-outline { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); }
+  .btn-outline:hover { background: rgba(255,255,255,0.1); }
+  .btn-small { padding: 4px 10px; font-size: 0.75rem; }
+
+  /* INSTRUCTIONS */
+  .instructions {
+    background: #dbeafe;
+    border-left: 4px solid var(--accent);
+    padding: 12px 20px;
+    margin: 16px 24px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+    color: #1e40af;
+    line-height: 1.5;
+  }
+
+  /* BOARD */
+  .board {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  .category {
+    margin-top: 20px;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+  }
+
+  .cat-header-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .cat-header .btn-small {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .cat-header .btn-small:hover {
+    background: rgba(255,255,255,0.35);
+  }
+
+  .cat-header .btn-small.delete-cat {
+    background: rgba(220,38,38,0.6);
+    border-color: rgba(220,38,38,0.8);
+  }
+
+  .cat-header .btn-small.delete-cat:hover {
+    background: rgba(220,38,38,0.9);
+  }
+
+  .cat-body {
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* SYMBOL CARD */
+  .sym-card {
+    width: 120px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+    position: relative;
+    background: #fafafa;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .sym-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  .sym-card .symbol {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+
+  .sym-card .label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    line-height: 1.2;
+  }
+
+  .sym-card .card-actions {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    display: none;
+    gap: 2px;
+  }
+
+  .sym-card:hover .card-actions {
+    display: flex;
+  }
+
+  .icon-btn {
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .icon-btn.edit { background: #dbeafe; color: var(--accent); }
+  .icon-btn.edit:hover { background: var(--accent); color: white; }
+  .icon-btn.delete { background: #fee2e2; color: var(--danger); }
+  .icon-btn.delete:hover { background: var(--danger); color: white; }
+
+  /* ADD BUTTON */
+  .add-card {
+    width: 120px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    color: #aaa;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70px;
+  }
+
+  .add-card:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: #f0f7ff;
+  }
+
+  .add-card .plus {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .add-card .add-text {
+    font-size: 0.65rem;
+    margin-top: 2px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 400px;
+    max-width: 90vw;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .modal h3 {
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 18px;
+  }
+
+  .btn-cancel { background: #e5e7eb; color: #374151; }
+  .btn-cancel:hover { background: #d1d5db; }
+
+  /* PRINT STYLES */
+  @media print {
+    .topbar, .instructions, .card-actions, .add-card, .cat-header-actions, .btn { display: none !important; }
+    .category { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+    body { background: white; }
+    .board { padding: 0; }
+  }
+
+  /* EXPORT PREVIEW */
+  .export-status {
+    display: none;
+    background: #dcfce7;
+    border-left: 4px solid var(--success);
+    padding: 12px 20px;
+    margin: 16px 24px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+    color: #166534;
+  }
+
+  .export-status.active { display: block; }
+
+  /* Counter */
+  .counter {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-weight: 400;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Calculus 2 — AAC Board Editor</h1>
+    <span class="counter" id="totalCount"></span>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-outline" onclick="addCategory()">+ Add Section</button>
+    <button class="btn btn-outline" onclick="window.print()">🖨 Print</button>
+    <button class="btn btn-success" onclick="exportPDF()">📄 Export PDF</button>
+    <button class="btn btn-success" onclick="exportImages()">🖼 Export Images</button>
+    <button class="btn btn-success" onclick="exportJSON()">💾 Save JSON</button>
+    <button class="btn btn-primary" onclick="document.getElementById('importInput').click()">📂 Import JSON</button>
+    <input type="file" id="importInput" accept=".json" style="display:none" onchange="importJSON(event)">
+  </div>
+</div>
+
+<div class="instructions">
+  <strong>How to use:</strong> Hover over any symbol to see edit ✏️ and delete 🗑 buttons. Click <strong>+ Add Symbol</strong> to add new ones. 
+  Use <strong>+ Add Section</strong> to create new categories. <strong>Print</strong> for a clean printable version. 
+  <strong>Save/Export</strong> saves your work as a JSON file you can reload later with <strong>Import</strong>.
+</div>
+
+<div class="export-status" id="exportStatus"></div>
+
+<div class="board" id="board"></div>
+
+<!-- SYMBOL EDIT MODAL -->
+<div class="modal-overlay" id="symbolModal">
+  <div class="modal">
+    <h3 id="modalTitle">Edit Symbol</h3>
+    <div class="form-group">
+      <label>Symbol (what displays on the button)</label>
+      <input type="text" id="symInput" placeholder="e.g. ∫, sin, x²">
+    </div>
+    <div class="form-group">
+      <label>English Name / Label</label>
+      <input type="text" id="nameInput" placeholder="e.g. integral, sine, x squared">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modalSave" onclick="saveSymbol()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MODAL -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal">
+    <h3 id="catModalTitle">Add New Section</h3>
+    <div class="form-group">
+      <label>Section Name</label>
+      <input type="text" id="catNameInput" placeholder="e.g. NEW SYMBOLS">
+    </div>
+    <div class="form-group">
+      <label>Color (hex)</label>
+      <input type="color" id="catColorInput" value="#6366f1" style="height:40px;cursor:pointer;">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeCatModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCategory()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script>
+// ========== DATA ==========
+let boardData = [
+  {
+    id: "numbers", name: "NUMBERS & DECIMALS", color: "#1565c0",
+    symbols: [
+      {s:"0",n:"zero"},{s:"1",n:"one"},{s:"2",n:"two"},{s:"3",n:"three"},{s:"4",n:"four"},
+      {s:"5",n:"five"},{s:"6",n:"six"},{s:"7",n:"seven"},{s:"8",n:"eight"},{s:"9",n:"nine"},
+      {s:".",n:"decimal point"},{s:"−",n:"negative"},{s:"10",n:"ten"},{s:"100",n:"hundred"}
+    ]
+  },
+  {
+    id: "fractions", name: "COMMON FRACTIONS", color: "#c62828",
+    symbols: [
+      {s:"1/2",n:"one half"},{s:"1/3",n:"one third"},{s:"1/4",n:"one fourth"},
+      {s:"2/3",n:"two thirds"},{s:"3/4",n:"three fourths"},{s:"1/5",n:"one fifth"},
+      {s:"1/6",n:"one sixth"},{s:"1/8",n:"one eighth"},{s:"1/n",n:"one over n"},
+      {s:"1/x",n:"one over x"},{s:"a/b",n:"a over b"},{s:"numerator",n:"numerator"},
+      {s:"denominator",n:"denominator"},{s:"/",n:"fraction bar"}
+    ]
+  },
+  {
+    id: "variables", name: "VARIABLES & CONSTANTS", color: "#2e7d32",
+    symbols: [
+      {s:"x",n:"x"},{s:"y",n:"y"},{s:"z",n:"z"},{s:"u",n:"u"},{s:"v",n:"v"},
+      {s:"t",n:"t"},{s:"n",n:"n"},{s:"k",n:"k"},{s:"a",n:"a"},{s:"b",n:"b"},
+      {s:"c",n:"c"},{s:"r",n:"r"},{s:"f(x)",n:"f of x"},{s:"g(x)",n:"g of x"}
+    ]
+  },
+  {
+    id: "operators", name: "BASIC OPERATORS", color: "#e65100",
+    symbols: [
+      {s:"+",n:"plus"},{s:"−",n:"minus"},{s:"×",n:"times"},
+      {s:"÷",n:"divided by"},{s:"=",n:"equals"},{s:"≠",n:"not equal"}
+    ]
+  },
+  {
+    id: "powers", name: "POWERS, ROOTS & LOGS", color: "#880e4f",
+    symbols: [
+      {s:"x²",n:"x squared"},{s:"x³",n:"x cubed"},{s:"xⁿ",n:"x to the n"},
+      {s:"x⁻¹",n:"x to the negative 1"},{s:"√x",n:"square root"},{s:"∛x",n:"cube root"},
+      {s:"ln x",n:"natural log"},{s:"log x",n:"log base 10"},{s:"logₐ(x)",n:"log base a"},
+      {s:"eˣ",n:"e to the x"},{s:"aˣ",n:"a to the x"}
+    ]
+  },
+  {
+    id: "calculus", name: "CALCULUS SYMBOLS", color: "#6a1b9a",
+    symbols: [
+      {s:"∫",n:"integral"},{s:"∫ₐᵇ",n:"definite integral a to b"},
+      {s:"dx",n:"with respect to x"},{s:"dy",n:"with respect to y"},
+      {s:"du",n:"with respect to u"},{s:"dt",n:"with respect to t"},
+      {s:"dθ",n:"with respect to theta"},{s:"+ C",n:"plus constant C"},
+      {s:"dy/dx",n:"derivative"},{s:"d/dx",n:"d over dx"},
+      {s:"d²y/dx²",n:"second derivative"},{s:"lim",n:"limit"},
+      {s:"→",n:"approaches"},{s:"n=1",n:"n equals 1"},
+      {s:"n=0",n:"n equals 0"},{s:"∞",n:"infinity"},
+      {s:"−∞",n:"negative infinity"},{s:"|ₐᵇ",n:"evaluated from a to b"},
+      {s:"F(b)−F(a)",n:"F of b minus F of a"},
+      {s:"ds",n:"arc length element"},{s:"r²",n:"r squared"},
+      {s:"½∫r²dθ",n:"polar area formula"}
+    ]
+  },
+  {
+    id: "trig", name: "TRIG & INVERSE TRIG", color: "#00695c",
+    symbols: [
+      {s:"sin",n:"sine"},{s:"cos",n:"cosine"},{s:"tan",n:"tangent"},
+      {s:"sec",n:"secant"},{s:"csc",n:"cosecant"},{s:"cot",n:"cotangent"},
+      {s:"sin⁻¹",n:"arcsine"},{s:"cos⁻¹",n:"arccosine"},{s:"tan⁻¹",n:"arctangent"},
+      {s:"sec⁻¹",n:"arcsecant"},{s:"sin²",n:"sine squared"},{s:"cos²",n:"cosine squared"},
+      {s:"tan²",n:"tangent squared"}
+    ]
+  },
+  {
+    id: "greek", name: "GREEK LETTERS & CONSTANTS", color: "#283593",
+    symbols: [
+      {s:"π",n:"pi"},{s:"e",n:"Euler's number"},{s:"θ",n:"theta"},
+      {s:"Δ",n:"Delta"},{s:"α",n:"alpha"},{s:"β",n:"beta"},
+      {s:"ε",n:"epsilon"},{s:"ρ",n:"rho"},{s:"Σ",n:"sigma"}
+    ]
+  },
+  {
+    id: "grouping", name: "GROUPING & STRUCTURE", color: "#4e342e",
+    symbols: [
+      {s:"(",n:"open parenthesis"},{s:")",n:"close parenthesis"},
+      {s:"[",n:"open bracket"},{s:"]",n:"close bracket"},
+      {s:"{",n:"open brace"},{s:"}",n:"close brace"},
+      {s:"|x|",n:"absolute value"}
+    ]
+  },
+  {
+    id: "comparison", name: "COMPARISON & LOGIC", color: "#33691e",
+    symbols: [
+      {s:"<",n:"less than"},{s:">",n:"greater than"},
+      {s:"≤",n:"less than or equal"},{s:"≥",n:"greater than or equal"},
+      {s:"≈",n:"approximately"},{s:"≠",n:"not equal"},
+      {s:"if",n:"if / when"}
+    ]
+  },
+  {
+    id: "series", name: "SERIES & SEQUENCE TERMS", color: "#4527a0",
+    symbols: [
+      {s:"aₙ",n:"a sub n"},{s:"aₙ₊₁",n:"a sub n plus 1"},
+      {s:"Sₙ",n:"S sub n"},{s:"S",n:"sum of series"},
+      {s:"n!",n:"n factorial"},{s:"r",n:"common ratio"},
+      {s:"|r|<1",n:"converges"},{s:"|r|≥1",n:"diverges"},
+      {s:"R",n:"radius of convergence"},{s:"(−1)ⁿ",n:"alternating sign"},
+      {s:"DNE",n:"does not exist"},{s:"undefined",n:"undefined"}
+    ]
+  },
+  {
+    id: "quick", name: "QUICK PHRASES (SPEED BUILDERS)", color: "#004d40",
+    symbols: [
+      {s:"from 0 to 1",n:"from 0 to 1"},{s:"from 0 to ∞",n:"from 0 to infinity"},
+      {s:"from 0 to π",n:"from 0 to pi"},{s:"from 0 to 2π",n:"from 0 to 2 pi"},
+      {s:"from a to b",n:"from a to b"},
+      {s:"as n→∞",n:"as n approaches infinity"},{s:"as x→0",n:"as x approaches 0"},
+      {s:"as x→∞",n:"as x approaches infinity"},{s:"n=1 to ∞",n:"n equals 1 to infinity"},
+      {s:"+ C",n:"plus C"},{s:"= 0",n:"equals zero"},
+      {s:"= 1",n:"equals one"},{s:"= ∞",n:"equals infinity"}
+    ]
+  },
+  {
+    id: "answers", name: "ANSWER PHRASES", color: "#bf360c",
+    symbols: [
+      {s:"converges",n:"converges"},{s:"diverges",n:"diverges"},
+      {s:"converges to",n:"converges to"},{s:"diverges to ∞",n:"diverges to infinity"},
+      {s:"absolutely",n:"converges absolutely"},{s:"conditionally",n:"converges conditionally"}
+    ]
+  }
+];
+
+// ========== STATE ==========
+let editingCatIdx = null;
+let editingSymIdx = null;
+let isAdding = false;
+
+// ========== RENDER ==========
+function render() {
+  const board = document.getElementById('board');
+  let total = 0;
+  board.innerHTML = '';
+
+  boardData.forEach((cat, catIdx) => {
+    const catDiv = document.createElement('div');
+    catDiv.className = 'category';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'cat-header';
+    header.style.background = cat.color;
+    header.innerHTML = `
+      <span>${cat.name} <span class="counter">(${cat.symbols.length})</span></span>
+      <div class="cat-header-actions">
+        <button class="btn-small" onclick="moveCategoryUp(${catIdx})" title="Move section up" ${catIdx === 0 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>▲</button>
+        <button class="btn-small" onclick="moveCategoryDown(${catIdx})" title="Move section down" ${catIdx === boardData.length - 1 ? 'disabled style="opacity:0.3;cursor:default"' : ''}>▼</button>
+        <button class="btn-small" onclick="editCategoryName(${catIdx})" title="Rename section">✏️</button>
+        <button class="btn-small delete-cat" onclick="deleteCategory(${catIdx})" title="Delete entire section">🗑</button>
+      </div>
+    `;
+    catDiv.appendChild(header);
+
+    // Body with symbols
+    const body = document.createElement('div');
+    body.className = 'cat-body';
+
+    cat.symbols.forEach((sym, symIdx) => {
+      total++;
+      const card = document.createElement('div');
+      card.className = 'sym-card';
+      card.innerHTML = `
+        <div class="card-actions">
+          <button class="icon-btn edit" onclick="editSymbol(${catIdx},${symIdx})" title="Edit">✏</button>
+          <button class="icon-btn delete" onclick="deleteSymbol(${catIdx},${symIdx})" title="Delete">✕</button>
+        </div>
+        <div class="symbol">${escapeHtml(sym.s)}</div>
+        <div class="label">${escapeHtml(sym.n)}</div>
+      `;
+      body.appendChild(card);
+    });
+
+    // Add button
+    const addCard = document.createElement('div');
+    addCard.className = 'add-card';
+    addCard.onclick = () => addSymbol(catIdx);
+    addCard.innerHTML = `<div class="plus">+</div><div class="add-text">Add Symbol</div>`;
+    body.appendChild(addCard);
+
+    catDiv.appendChild(body);
+    board.appendChild(catDiv);
+  });
+
+  document.getElementById('totalCount').textContent = `${total} symbols total`;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ========== SYMBOL OPERATIONS ==========
+function editSymbol(catIdx, symIdx) {
+  editingCatIdx = catIdx;
+  editingSymIdx = symIdx;
+  isAdding = false;
+  const sym = boardData[catIdx].symbols[symIdx];
+  document.getElementById('modalTitle').textContent = 'Edit Symbol';
+  document.getElementById('symInput').value = sym.s;
+  document.getElementById('nameInput').value = sym.n;
+  document.getElementById('symbolModal').classList.add('active');
+  document.getElementById('symInput').focus();
+}
+
+function addSymbol(catIdx) {
+  editingCatIdx = catIdx;
+  editingSymIdx = null;
+  isAdding = true;
+  document.getElementById('modalTitle').textContent = 'Add New Symbol';
+  document.getElementById('symInput').value = '';
+  document.getElementById('nameInput').value = '';
+  document.getElementById('symbolModal').classList.add('active');
+  document.getElementById('symInput').focus();
+}
+
+function saveSymbol() {
+  const s = document.getElementById('symInput').value.trim();
+  const n = document.getElementById('nameInput').value.trim();
+  if (!s) { alert('Symbol cannot be empty'); return; }
+
+  if (isAdding) {
+    boardData[editingCatIdx].symbols.push({ s, n: n || s });
+  } else {
+    boardData[editingCatIdx].symbols[editingSymIdx] = { s, n: n || s };
+  }
+
+  closeModal();
+  render();
+}
+
+function deleteSymbol(catIdx, symIdx) {
+  const sym = boardData[catIdx].symbols[symIdx];
+  if (confirm(`Delete "${sym.s}" (${sym.n})?`)) {
+    boardData[catIdx].symbols.splice(symIdx, 1);
+    render();
+  }
+}
+
+function closeModal() {
+  document.getElementById('symbolModal').classList.remove('active');
+}
+
+// ========== CATEGORY OPERATIONS ==========
+function addCategory() {
+  document.getElementById('catModalTitle').textContent = 'Add New Section';
+  document.getElementById('catNameInput').value = '';
+  document.getElementById('catColorInput').value = '#6366f1';
+  editingCatIdx = null;
+  document.getElementById('catModal').classList.add('active');
+  document.getElementById('catNameInput').focus();
+}
+
+function editCategoryName(catIdx) {
+  document.getElementById('catModalTitle').textContent = 'Edit Section';
+  document.getElementById('catNameInput').value = boardData[catIdx].name;
+  document.getElementById('catColorInput').value = boardData[catIdx].color;
+  editingCatIdx = catIdx;
+  document.getElementById('catModal').classList.add('active');
+  document.getElementById('catNameInput').focus();
+}
+
+function saveCategory() {
+  const name = document.getElementById('catNameInput').value.trim();
+  const color = document.getElementById('catColorInput').value;
+  if (!name) { alert('Name cannot be empty'); return; }
+
+  if (editingCatIdx !== null && editingCatIdx < boardData.length) {
+    boardData[editingCatIdx].name = name;
+    boardData[editingCatIdx].color = color;
+  } else {
+    boardData.push({
+      id: name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+      name: name,
+      color: color,
+      symbols: []
+    });
+  }
+
+  closeCatModal();
+  render();
+}
+
+function deleteCategory(catIdx) {
+  if (confirm(`Delete entire section "${boardData[catIdx].name}" and all its symbols?`)) {
+    boardData.splice(catIdx, 1);
+    render();
+  }
+}
+
+function moveCategoryUp(catIdx) {
+  if (catIdx <= 0) return;
+  const temp = boardData[catIdx];
+  boardData[catIdx] = boardData[catIdx - 1];
+  boardData[catIdx - 1] = temp;
+  render();
+}
+
+function moveCategoryDown(catIdx) {
+  if (catIdx >= boardData.length - 1) return;
+  const temp = boardData[catIdx];
+  boardData[catIdx] = boardData[catIdx + 1];
+  boardData[catIdx + 1] = temp;
+  render();
+}
+
+function closeCatModal() {
+  document.getElementById('catModal').classList.remove('active');
+  editingCatIdx = null;
+}
+
+// ========== IMAGE EXPORT ==========
+function exportImages() {
+  const statusEl = document.getElementById('exportStatus');
+  statusEl.textContent = '⏳ Generating images... this may take a minute';
+  statusEl.style.display = 'block';
+  statusEl.classList.add('active');
+
+  const zip = new JSZip();
+  const canvas = document.createElement('canvas');
+  canvas.width = 400;
+  canvas.height = 400;
+  const ctx = canvas.getContext('2d');
+
+  const catColors = {};
+  boardData.forEach(cat => { catColors[cat.id] = cat.color; });
+
+  let totalImages = 0;
+
+  boardData.forEach((cat, catIdx) => {
+    const safeCatName = cat.name.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_');
+    const folder = zip.folder(safeCatName);
+
+    cat.symbols.forEach((sym, symIdx) => {
+      // Draw card image
+      ctx.clearRect(0, 0, 400, 400);
+
+      // White background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 400, 400);
+
+      // Border
+      ctx.strokeStyle = '#c8c8c8';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, 1, 398, 398);
+
+      // Color accent bar at top
+      ctx.fillStyle = cat.color;
+      ctx.fillRect(0, 0, 400, 8);
+
+      // Symbol text
+      let fontSize = 140;
+      if (sym.s.length > 10) fontSize = 44;
+      else if (sym.s.length > 7) fontSize = 56;
+      else if (sym.s.length > 4) fontSize = 72;
+      else if (sym.s.length > 2) fontSize = 100;
+
+      ctx.fillStyle = '#1e1e1e';
+      ctx.font = `bold ${fontSize}px "Segoe UI", "DejaVu Sans", Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(sym.s, 200, 170);
+
+      // Separator line
+      ctx.strokeStyle = '#dcdcdc';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(40, 300);
+      ctx.lineTo(360, 300);
+      ctx.stroke();
+
+      // Name text
+      let nameFontSize = 26;
+      if (sym.n.length > 20) nameFontSize = 20;
+      else if (sym.n.length > 14) nameFontSize = 22;
+
+      ctx.fillStyle = '#555555';
+      ctx.font = `${nameFontSize}px "Segoe UI", "DejaVu Sans", Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(sym.n, 200, 345);
+
+      // Category color dot
+      ctx.fillStyle = cat.color;
+      ctx.beginPath();
+      const dotX = 200 - ctx.measureText(sym.n).width / 2 - 16;
+      ctx.arc(dotX, 345, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Convert to PNG and add to zip
+      const safeName = sym.n.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_');
+      const fileName = `${String(symIdx + 1).padStart(2, '0')}_${safeName}.png`;
+      const dataUrl = canvas.toDataURL('image/png');
+      const base64 = dataUrl.split(',')[1];
+      folder.file(fileName, base64, { base64: true });
+
+      totalImages++;
+    });
+  });
+
+  // Also create ALL_FLAT folder
+  const flatFolder = zip.folder('ALL_FLAT');
+  boardData.forEach((cat) => {
+    const safeCatName = cat.name.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_');
+    cat.symbols.forEach((sym, symIdx) => {
+      const safeName = sym.n.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_');
+      const shortCat = safeCatName.substring(0, 20);
+
+      // Redraw for flat folder
+      ctx.clearRect(0, 0, 400, 400);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 400, 400);
+      ctx.strokeStyle = '#c8c8c8';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, 1, 398, 398);
+      ctx.fillStyle = cat.color;
+      ctx.fillRect(0, 0, 400, 8);
+
+      let fontSize = 140;
+      if (sym.s.length > 10) fontSize = 44;
+      else if (sym.s.length > 7) fontSize = 56;
+      else if (sym.s.length > 4) fontSize = 72;
+      else if (sym.s.length > 2) fontSize = 100;
+
+      ctx.fillStyle = '#1e1e1e';
+      ctx.font = `bold ${fontSize}px "Segoe UI", "DejaVu Sans", Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(sym.s, 200, 170);
+
+      ctx.strokeStyle = '#dcdcdc';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(40, 300);
+      ctx.lineTo(360, 300);
+      ctx.stroke();
+
+      let nameFontSize = 26;
+      if (sym.n.length > 20) nameFontSize = 20;
+      else if (sym.n.length > 14) nameFontSize = 22;
+
+      ctx.fillStyle = '#555555';
+      ctx.font = `${nameFontSize}px "Segoe UI", "DejaVu Sans", Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(sym.n, 200, 345);
+
+      ctx.fillStyle = cat.color;
+      ctx.beginPath();
+      const dotX = 200 - ctx.measureText(sym.n).width / 2 - 16;
+      ctx.arc(dotX, 345, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      const fileName = `${shortCat}_${String(symIdx + 1).padStart(2, '0')}_${safeName}.png`;
+      const dataUrl = canvas.toDataURL('image/png');
+      const base64 = dataUrl.split(',')[1];
+      flatFolder.file(fileName, base64, { base64: true });
+    });
+  });
+
+  // Generate zip
+  zip.generateAsync({ type: 'blob' }).then(function(content) {
+    saveAs(content, 'Calc2_AAC_Symbol_Images.zip');
+    statusEl.textContent = `✅ ${totalImages} images exported in zip! Organized by category + ALL_FLAT folder.`;
+    setTimeout(() => { statusEl.style.display = 'none'; statusEl.classList.remove('active'); }, 5000);
+  }).catch(function(err) {
+    statusEl.textContent = '❌ Image export failed: ' + err.message;
+  });
+}
+
+// ========== PDF EXPORT ==========
+function exportPDF() {
+  // Hide all edit UI
+  const actions = document.querySelectorAll('.card-actions, .add-card, .cat-header-actions');
+  actions.forEach(el => el.style.display = 'none');
+
+  const topbar = document.querySelector('.topbar');
+  const instructions = document.querySelector('.instructions');
+  const exportStatus = document.getElementById('exportStatus');
+  topbar.style.display = 'none';
+  instructions.style.display = 'none';
+  exportStatus.style.display = 'none';
+
+  const board = document.getElementById('board');
+
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: 'Calc2_AAC_Communication_Board.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+
+  // Show generating status
+  const statusEl = document.getElementById('exportStatus');
+  statusEl.textContent = '⏳ Generating PDF... please wait';
+  statusEl.style.display = 'block';
+
+  html2pdf().set(opt).from(board).save().then(() => {
+    // Restore UI
+    topbar.style.display = '';
+    instructions.style.display = '';
+    actions.forEach(el => el.style.display = '');
+    statusEl.textContent = '✅ PDF exported successfully!';
+    statusEl.style.display = 'block';
+    setTimeout(() => statusEl.style.display = 'none', 4000);
+  }).catch(err => {
+    topbar.style.display = '';
+    instructions.style.display = '';
+    actions.forEach(el => el.style.display = '');
+    statusEl.textContent = '❌ PDF export failed: ' + err.message;
+    statusEl.style.display = 'block';
+  });
+}
+
+// ========== EXPORT / IMPORT ==========
+function exportJSON() {
+  const json = JSON.stringify(boardData, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'calc2_aac_board.json';
+  a.click();
+  URL.revokeObjectURL(url);
+
+  const status = document.getElementById('exportStatus');
+  status.textContent = '✅ Board saved! You can reload this file anytime with the Import button.';
+  status.classList.add('active');
+  setTimeout(() => status.classList.remove('active'), 4000);
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (Array.isArray(data)) {
+        boardData = data;
+        render();
+        const status = document.getElementById('exportStatus');
+        status.textContent = '✅ Board imported successfully!';
+        status.classList.add('active');
+        setTimeout(() => status.classList.remove('active'), 4000);
+      } else {
+        alert('Invalid file format');
+      }
+    } catch (err) {
+      alert('Error reading file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ========== KEYBOARD SHORTCUTS ==========
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeCatModal();
+  }
+  if (e.key === 'Enter') {
+    if (document.getElementById('symbolModal').classList.contains('active')) {
+      saveSymbol();
+    }
+    if (document.getElementById('catModal').classList.contains('active')) {
+      saveCategory();
+    }
+  }
+});
+
+// ========== INIT ==========
+render();
+</script>
+</body>
+</html>
