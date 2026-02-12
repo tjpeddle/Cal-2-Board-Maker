@@ -80,6 +80,52 @@
   .btn-outline:hover { background: rgba(255,255,255,0.1); }
   .btn-small { padding: 4px 10px; font-size: 0.75rem; }
 
+  /* BOARD TITLE */
+  .board-title {
+    max-width: 1200px;
+    margin: 16px auto 0;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .title-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .title-text:hover {
+    border-color: var(--border);
+    background: #f8fafc;
+  }
+
+  .title-edit-btn {
+    background: #e5e7eb !important;
+    color: #374151 !important;
+    border: none !important;
+    font-size: 0.7rem !important;
+  }
+
+  .title-input {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--text);
+    padding: 4px 8px;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    outline: none;
+    width: 100%;
+    max-width: 600px;
+  }
+
   /* INSTRUCTIONS */
   .instructions {
     background: #dbeafe;
@@ -184,6 +230,15 @@
   .sym-card:hover {
     border-color: var(--accent);
     box-shadow: var(--shadow);
+  }
+
+  .card-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    border-radius: 6px 6px 0 0;
   }
 
   .sym-card .symbol {
@@ -365,9 +420,180 @@
   .btn-cancel { background: #e5e7eb; color: #374151; }
   .btn-cancel:hover { background: #d1d5db; }
 
-  /* PRINT STYLES */
+  /* LIBRARY PANEL */
+  .library-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+
+  .library-overlay.active { display: flex; }
+
+  .library-panel {
+    background: white;
+    border-radius: 12px;
+    width: 800px;
+    max-width: 95vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .library-header {
+    padding: 16px 20px;
+    background: #1e293b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .library-header h2 { font-size: 1.1rem; }
+
+  .library-search {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+  }
+
+  .library-search input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .library-search input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .library-search .search-hint {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .library-results {
+    overflow-y: auto;
+    padding: 12px 20px;
+    flex: 1;
+  }
+
+  .lib-category-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin: 12px 0 6px;
+    display: inline-block;
+  }
+
+  .lib-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .lib-item {
+    width: 140px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fafafa;
+  }
+
+  .lib-item:hover {
+    border-color: var(--accent);
+    background: #eff6ff;
+    box-shadow: var(--shadow);
+  }
+
+  .lib-item .lib-sym {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .lib-item .lib-name {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    line-height: 1.2;
+  }
+
+  .lib-item .lib-tags {
+    font-size: 0.5rem;
+    color: #9ca3af;
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  .lib-item .lib-add-btn {
+    margin-top: 4px;
+    font-size: 0.6rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    display: none;
+  }
+
+  .lib-item:hover .lib-add-btn { display: inline-block; }
+  .lib-item .lib-add-btn:hover { background: var(--accent-hover); }
+
+  .no-results {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  /* CATEGORY PICKER IN LIBRARY */
+  .lib-cat-picker {
+    display: none;
+    position: fixed;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    padding: 8px;
+    z-index: 300;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .lib-cat-picker.active { display: block; }
+
+  .lib-cat-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    transition: background 0.15s;
+  }
+
+  .lib-cat-option:hover { background: #eff6ff; }
+
+  /* Print styles */
   @media print {
-    .topbar, .instructions, .card-actions, .add-card, .cat-header-actions, .btn { display: none !important; }
+    .topbar, .instructions, .card-actions, .add-card, .cat-header-actions, .btn, .move-arrows, .title-edit-btn { display: none !important; }
     .category { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
     body { background: white; }
     .board { padding: 0; }
@@ -403,6 +629,7 @@
     <span class="counter" id="totalCount"></span>
   </div>
   <div class="topbar-actions">
+    <button class="btn btn-outline" onclick="toggleLibrary()">📚 Symbol Library</button>
     <button class="btn btn-outline" onclick="addCategory()">+ Add Section</button>
     <button class="btn btn-outline" onclick="window.print()">🖨 Print</button>
     <button class="btn btn-success" onclick="exportPDF()">📄 Export PDF</button>
@@ -421,7 +648,30 @@
 
 <div class="export-status" id="exportStatus"></div>
 
+<div class="board-title" id="boardTitleArea">
+  <h1 class="title-text" id="boardTitle" onclick="editTitle()">CALCULUS 2 — AAC COMMUNICATION BOARD</h1>
+  <button class="btn btn-small btn-outline title-edit-btn" onclick="editTitle()">✏️ Edit Title</button>
+</div>
+
 <div class="board" id="board"></div>
+
+<!-- SYMBOL LIBRARY -->
+<div class="library-overlay" id="libraryOverlay">
+  <div class="library-panel">
+    <div class="library-header">
+      <h2>📚 Calculus Symbol Library</h2>
+      <button class="btn btn-outline btn-small" onclick="toggleLibrary()">✕ Close</button>
+    </div>
+    <div class="library-search">
+      <input type="text" id="libSearch" placeholder="Type to search... e.g. integral, derivative, sigma, limit, sum" oninput="filterLibrary()">
+      <div class="search-hint">Search by name, description, or concept. Click any symbol to add it to your board.</div>
+    </div>
+    <div class="library-results" id="libResults"></div>
+  </div>
+</div>
+
+<!-- CATEGORY PICKER (where to add from library) -->
+<div class="lib-cat-picker" id="catPicker"></div>
 
 <!-- SYMBOL EDIT MODAL -->
 <div class="modal-overlay" id="symbolModal">
@@ -662,6 +912,7 @@ function render() {
       const isLast = symIdx === cat.symbols.length - 1;
 
       card.innerHTML = `
+        <div class="card-accent" style="background:${cat.color}"></div>
         <div class="card-actions">
           <button class="icon-btn edit" onclick="editSymbol(${catIdx},${symIdx})" title="Edit">✏</button>
           <button class="icon-btn delete" onclick="deleteSymbol(${catIdx},${symIdx})" title="Delete">✕</button>
@@ -693,6 +944,425 @@ function render() {
 function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+// ========== BOARD TITLE ==========
+let boardTitle = "CALCULUS 2 — AAC COMMUNICATION BOARD";
+
+function editTitle() {
+  const titleArea = document.getElementById('boardTitleArea');
+  titleArea.innerHTML = `
+    <input type="text" class="title-input" id="titleInput" value="${boardTitle}" 
+      onkeydown="if(event.key==='Enter')saveTitle()" onblur="saveTitle()">
+    <button class="btn btn-small btn-primary" onclick="saveTitle()">Save</button>
+  `;
+  document.getElementById('titleInput').focus();
+  document.getElementById('titleInput').select();
+}
+
+function saveTitle() {
+  const input = document.getElementById('titleInput');
+  if (input) {
+    boardTitle = input.value.trim() || "CALCULUS 2 — AAC COMMUNICATION BOARD";
+  }
+  const titleArea = document.getElementById('boardTitleArea');
+  titleArea.innerHTML = `
+    <h1 class="title-text" id="boardTitle" onclick="editTitle()">${escapeHtml(boardTitle)}</h1>
+    <button class="btn btn-small btn-outline title-edit-btn" onclick="editTitle()">✏️ Edit Title</button>
+  `;
+}
+
+// ========== SYMBOL LIBRARY ==========
+const LIBRARY = [
+  // === BASIC MATH ===
+  {cat:"Basic Math", color:"#e65100", sym:"+", name:"plus", tags:"add addition sum positive"},
+  {cat:"Basic Math", color:"#e65100", sym:"−", name:"minus", tags:"subtract subtraction negative"},
+  {cat:"Basic Math", color:"#e65100", sym:"×", name:"times", tags:"multiply multiplication product"},
+  {cat:"Basic Math", color:"#e65100", sym:"÷", name:"divided by", tags:"divide division quotient"},
+  {cat:"Basic Math", color:"#e65100", sym:"=", name:"equals", tags:"equal same"},
+  {cat:"Basic Math", color:"#e65100", sym:"≠", name:"not equal", tags:"unequal different"},
+  {cat:"Basic Math", color:"#e65100", sym:"±", name:"plus or minus", tags:"plus minus both"},
+  {cat:"Basic Math", color:"#e65100", sym:"∝", name:"proportional to", tags:"proportion"},
+
+  // === NUMBERS ===
+  {cat:"Numbers", color:"#1565c0", sym:"0", name:"zero", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"1", name:"one", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"2", name:"two", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"3", name:"three", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"4", name:"four", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"5", name:"five", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"6", name:"six", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"7", name:"seven", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"8", name:"eight", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"9", name:"nine", tags:"number digit"},
+  {cat:"Numbers", color:"#1565c0", sym:"10", name:"ten", tags:"number"},
+  {cat:"Numbers", color:"#1565c0", sym:"100", name:"hundred", tags:"number"},
+  {cat:"Numbers", color:"#1565c0", sym:".", name:"decimal point", tags:"dot period"},
+  {cat:"Numbers", color:"#1565c0", sym:"−", name:"negative sign", tags:"minus negative"},
+
+  // === FRACTIONS ===
+  {cat:"Fractions", color:"#c62828", sym:"1/2", name:"one half", tags:"fraction half"},
+  {cat:"Fractions", color:"#c62828", sym:"1/3", name:"one third", tags:"fraction third"},
+  {cat:"Fractions", color:"#c62828", sym:"1/4", name:"one fourth", tags:"fraction quarter fourth"},
+  {cat:"Fractions", color:"#c62828", sym:"2/3", name:"two thirds", tags:"fraction"},
+  {cat:"Fractions", color:"#c62828", sym:"3/4", name:"three fourths", tags:"fraction quarter"},
+  {cat:"Fractions", color:"#c62828", sym:"1/5", name:"one fifth", tags:"fraction"},
+  {cat:"Fractions", color:"#c62828", sym:"1/6", name:"one sixth", tags:"fraction"},
+  {cat:"Fractions", color:"#c62828", sym:"1/8", name:"one eighth", tags:"fraction"},
+  {cat:"Fractions", color:"#c62828", sym:"1/n", name:"one over n", tags:"fraction reciprocal"},
+  {cat:"Fractions", color:"#c62828", sym:"1/x", name:"one over x", tags:"fraction reciprocal"},
+  {cat:"Fractions", color:"#c62828", sym:"a/b", name:"a over b", tags:"fraction general"},
+  {cat:"Fractions", color:"#c62828", sym:"numerator", name:"numerator", tags:"top fraction"},
+  {cat:"Fractions", color:"#c62828", sym:"denominator", name:"denominator", tags:"bottom fraction"},
+  {cat:"Fractions", color:"#c62828", sym:"/", name:"fraction bar", tags:"divide over"},
+
+  // === VARIABLES ===
+  {cat:"Variables", color:"#2e7d32", sym:"x", name:"x", tags:"variable unknown"},
+  {cat:"Variables", color:"#2e7d32", sym:"y", name:"y", tags:"variable unknown"},
+  {cat:"Variables", color:"#2e7d32", sym:"z", name:"z", tags:"variable unknown"},
+  {cat:"Variables", color:"#2e7d32", sym:"u", name:"u", tags:"variable substitution"},
+  {cat:"Variables", color:"#2e7d32", sym:"v", name:"v", tags:"variable"},
+  {cat:"Variables", color:"#2e7d32", sym:"t", name:"t", tags:"variable parameter time"},
+  {cat:"Variables", color:"#2e7d32", sym:"n", name:"n", tags:"variable index integer"},
+  {cat:"Variables", color:"#2e7d32", sym:"k", name:"k", tags:"variable index counter"},
+  {cat:"Variables", color:"#2e7d32", sym:"a", name:"a", tags:"variable constant coefficient"},
+  {cat:"Variables", color:"#2e7d32", sym:"b", name:"b", tags:"variable constant coefficient"},
+  {cat:"Variables", color:"#2e7d32", sym:"c", name:"c", tags:"variable constant coefficient"},
+  {cat:"Variables", color:"#2e7d32", sym:"r", name:"r", tags:"variable ratio radius"},
+  {cat:"Variables", color:"#2e7d32", sym:"f(x)", name:"f of x", tags:"function"},
+  {cat:"Variables", color:"#2e7d32", sym:"g(x)", name:"g of x", tags:"function"},
+  {cat:"Variables", color:"#2e7d32", sym:"h(x)", name:"h of x", tags:"function"},
+
+  // === POWERS ROOTS LOGS ===
+  {cat:"Powers & Roots", color:"#880e4f", sym:"x²", name:"x squared", tags:"power exponent square second"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"x³", name:"x cubed", tags:"power exponent cube third"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"xⁿ", name:"x to the n", tags:"power exponent general"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"x⁻¹", name:"x to the negative 1", tags:"power inverse reciprocal"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"x⁻²", name:"x to the negative 2", tags:"power inverse"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"√x", name:"square root", tags:"radical root sqrt"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"∛x", name:"cube root", tags:"radical root cbrt third"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"ⁿ√x", name:"nth root", tags:"radical root general"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"ln x", name:"natural log", tags:"logarithm natural ln e base"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"log x", name:"log base 10", tags:"logarithm common"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"logₐ(x)", name:"log base a", tags:"logarithm general base"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"log₂(x)", name:"log base 2", tags:"logarithm binary"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"eˣ", name:"e to the x", tags:"exponential euler natural"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"aˣ", name:"a to the x", tags:"exponential general"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"2ⁿ", name:"2 to the n", tags:"exponential power"},
+  {cat:"Powers & Roots", color:"#880e4f", sym:"10ⁿ", name:"10 to the n", tags:"exponential power"},
+
+  // === CALCULUS — INTEGRALS ===
+  {cat:"Integrals", color:"#6a1b9a", sym:"∫", name:"integral", tags:"integrate antiderivative area"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"∫ₐᵇ", name:"definite integral a to b", tags:"integrate definite bounds limits area"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"∬", name:"double integral", tags:"integrate two dimensional area volume"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"∭", name:"triple integral", tags:"integrate three dimensional volume"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"∮", name:"contour integral", tags:"integrate closed loop line path"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"dx", name:"with respect to x", tags:"differential variable integration"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"dy", name:"with respect to y", tags:"differential variable integration"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"du", name:"with respect to u", tags:"differential substitution"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"dt", name:"with respect to t", tags:"differential time parameter"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"dθ", name:"with respect to theta", tags:"differential angle polar"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"dr", name:"with respect to r", tags:"differential radius polar"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"+ C", name:"plus constant C", tags:"constant integration indefinite"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"|ₐᵇ", name:"evaluated from a to b", tags:"evaluate bounds fundamental theorem"},
+  {cat:"Integrals", color:"#6a1b9a", sym:"F(b)−F(a)", name:"F of b minus F of a", tags:"fundamental theorem calculus evaluate"},
+
+  // === CALCULUS — DERIVATIVES ===
+  {cat:"Derivatives", color:"#7b1fa2", sym:"dy/dx", name:"derivative", tags:"derivative rate change slope dydx"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"d/dx", name:"d over dx", tags:"derivative operator differentiate"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"d²y/dx²", name:"second derivative", tags:"derivative second concavity acceleration"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"dⁿy/dxⁿ", name:"nth derivative", tags:"derivative higher order"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"f'(x)", name:"f prime of x", tags:"derivative prime notation first"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"f''(x)", name:"f double prime", tags:"derivative second prime notation"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"dy/dt", name:"dy over dt", tags:"derivative time rate parametric"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"dx/dt", name:"dx over dt", tags:"derivative time rate parametric"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"∂/∂x", name:"partial derivative", tags:"partial multivariable"},
+  {cat:"Derivatives", color:"#7b1fa2", sym:"∇", name:"nabla / gradient", tags:"gradient del vector calculus"},
+
+  // === LIMITS ===
+  {cat:"Limits", color:"#ad1457", sym:"lim", name:"limit", tags:"limit approach tends"},
+  {cat:"Limits", color:"#ad1457", sym:"→", name:"approaches", tags:"arrow tends goes to limit"},
+  {cat:"Limits", color:"#ad1457", sym:"∞", name:"infinity", tags:"infinite forever unbounded"},
+  {cat:"Limits", color:"#ad1457", sym:"−∞", name:"negative infinity", tags:"infinite negative unbounded"},
+  {cat:"Limits", color:"#ad1457", sym:"0⁺", name:"zero from the right", tags:"limit right side positive approach"},
+  {cat:"Limits", color:"#ad1457", sym:"0⁻", name:"zero from the left", tags:"limit left side negative approach"},
+  {cat:"Limits", color:"#ad1457", sym:"DNE", name:"does not exist", tags:"limit undefined no limit"},
+  {cat:"Limits", color:"#ad1457", sym:"L'Hôpital", name:"L'Hopital's rule", tags:"limit indeterminate 0/0 infinity/infinity hospital"},
+
+  // === SUMMATION & SERIES ===
+  {cat:"Series & Sequences", color:"#4527a0", sym:"Σ", name:"sigma / summation", tags:"sum series sigma add total"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"Π", name:"pi / product", tags:"product multiply series"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"aₙ", name:"a sub n", tags:"term sequence nth general"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"aₙ₊₁", name:"a sub n plus 1", tags:"term next sequence"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"Sₙ", name:"S sub n", tags:"partial sum series"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"S", name:"sum of series", tags:"total sum infinite"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"n!", name:"n factorial", tags:"factorial multiply product permutation"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"r", name:"common ratio", tags:"ratio geometric series"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"|r|<1", name:"converges", tags:"convergence ratio test geometric"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"|r|≥1", name:"diverges", tags:"divergence ratio test geometric"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"R", name:"radius of convergence", tags:"radius power series interval"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"(−1)ⁿ", name:"alternating sign", tags:"alternating series sign change"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"n=1", name:"n equals 1", tags:"index start summation"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"n=0", name:"n equals 0", tags:"index start summation"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"∑aₙ", name:"sum of a sub n", tags:"series summation terms"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"∑∞", name:"infinite sum", tags:"series infinite summation"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"converges", name:"converges", tags:"convergence limit finite"},
+  {cat:"Series & Sequences", color:"#4527a0", sym:"diverges", name:"diverges", tags:"divergence infinite no limit"},
+
+  // === POWER SERIES ===
+  {cat:"Power Series", color:"#311b92", sym:"∑cₙxⁿ", name:"power series", tags:"power series coefficients taylor"},
+  {cat:"Power Series", color:"#311b92", sym:"∑cₙ(x−a)ⁿ", name:"power series centered at a", tags:"power series center shift"},
+  {cat:"Power Series", color:"#311b92", sym:"eˣ = ∑xⁿ/n!", name:"Taylor series for e^x", tags:"taylor maclaurin exponential series expansion"},
+  {cat:"Power Series", color:"#311b92", sym:"sin x = ∑...", name:"Taylor series for sin x", tags:"taylor maclaurin sine series expansion"},
+  {cat:"Power Series", color:"#311b92", sym:"cos x = ∑...", name:"Taylor series for cos x", tags:"taylor maclaurin cosine series expansion"},
+  {cat:"Power Series", color:"#311b92", sym:"1/(1−x)", name:"geometric series sum", tags:"geometric series closed form"},
+  {cat:"Power Series", color:"#311b92", sym:"[−R, R]", name:"interval of convergence", tags:"interval radius convergence power"},
+  {cat:"Power Series", color:"#311b92", sym:"Tₙ(x)", name:"Taylor polynomial degree n", tags:"taylor polynomial approximation"},
+
+  // === TRIGONOMETRY ===
+  {cat:"Trigonometry", color:"#00695c", sym:"sin", name:"sine", tags:"trig sin opposite hypotenuse"},
+  {cat:"Trigonometry", color:"#00695c", sym:"cos", name:"cosine", tags:"trig cos adjacent hypotenuse"},
+  {cat:"Trigonometry", color:"#00695c", sym:"tan", name:"tangent", tags:"trig tan opposite adjacent"},
+  {cat:"Trigonometry", color:"#00695c", sym:"sec", name:"secant", tags:"trig sec reciprocal cosine"},
+  {cat:"Trigonometry", color:"#00695c", sym:"csc", name:"cosecant", tags:"trig csc reciprocal sine"},
+  {cat:"Trigonometry", color:"#00695c", sym:"cot", name:"cotangent", tags:"trig cot reciprocal tangent"},
+  {cat:"Trigonometry", color:"#00695c", sym:"sin⁻¹", name:"arcsine", tags:"inverse trig arcsin"},
+  {cat:"Trigonometry", color:"#00695c", sym:"cos⁻¹", name:"arccosine", tags:"inverse trig arccos"},
+  {cat:"Trigonometry", color:"#00695c", sym:"tan⁻¹", name:"arctangent", tags:"inverse trig arctan"},
+  {cat:"Trigonometry", color:"#00695c", sym:"sec⁻¹", name:"arcsecant", tags:"inverse trig arcsec"},
+  {cat:"Trigonometry", color:"#00695c", sym:"sin²", name:"sine squared", tags:"trig squared power"},
+  {cat:"Trigonometry", color:"#00695c", sym:"cos²", name:"cosine squared", tags:"trig squared power"},
+  {cat:"Trigonometry", color:"#00695c", sym:"tan²", name:"tangent squared", tags:"trig squared power"},
+  {cat:"Trigonometry", color:"#00695c", sym:"sec²", name:"secant squared", tags:"trig squared power derivative tangent"},
+  {cat:"Trigonometry", color:"#00695c", sym:"csc²", name:"cosecant squared", tags:"trig squared power"},
+  {cat:"Trigonometry", color:"#00695c", sym:"sin(2x)", name:"sine of 2x", tags:"trig double angle"},
+  {cat:"Trigonometry", color:"#00695c", sym:"cos(2x)", name:"cosine of 2x", tags:"trig double angle"},
+
+  // === HYPERBOLIC ===
+  {cat:"Hyperbolic", color:"#f57f17", sym:"sinh", name:"hyperbolic sine", tags:"hyp sinh"},
+  {cat:"Hyperbolic", color:"#f57f17", sym:"cosh", name:"hyperbolic cosine", tags:"hyp cosh"},
+  {cat:"Hyperbolic", color:"#f57f17", sym:"tanh", name:"hyperbolic tangent", tags:"hyp tanh"},
+  {cat:"Hyperbolic", color:"#f57f17", sym:"sech", name:"hyperbolic secant", tags:"hyp sech"},
+  {cat:"Hyperbolic", color:"#f57f17", sym:"csch", name:"hyperbolic cosecant", tags:"hyp csch"},
+  {cat:"Hyperbolic", color:"#f57f17", sym:"coth", name:"hyperbolic cotangent", tags:"hyp coth"},
+
+  // === GREEK LETTERS ===
+  {cat:"Greek Letters", color:"#283593", sym:"π", name:"pi", tags:"greek pi circle 3.14159"},
+  {cat:"Greek Letters", color:"#283593", sym:"e", name:"Euler's number", tags:"euler natural 2.718 constant"},
+  {cat:"Greek Letters", color:"#283593", sym:"θ", name:"theta", tags:"greek angle polar"},
+  {cat:"Greek Letters", color:"#283593", sym:"Δ", name:"Delta", tags:"greek change difference"},
+  {cat:"Greek Letters", color:"#283593", sym:"α", name:"alpha", tags:"greek"},
+  {cat:"Greek Letters", color:"#283593", sym:"β", name:"beta", tags:"greek"},
+  {cat:"Greek Letters", color:"#283593", sym:"γ", name:"gamma", tags:"greek"},
+  {cat:"Greek Letters", color:"#283593", sym:"ε", name:"epsilon", tags:"greek small error limit"},
+  {cat:"Greek Letters", color:"#283593", sym:"ρ", name:"rho", tags:"greek density radius"},
+  {cat:"Greek Letters", color:"#283593", sym:"σ", name:"sigma (lowercase)", tags:"greek standard deviation"},
+  {cat:"Greek Letters", color:"#283593", sym:"Σ", name:"sigma (uppercase)", tags:"greek summation sum"},
+  {cat:"Greek Letters", color:"#283593", sym:"τ", name:"tau", tags:"greek torque time"},
+  {cat:"Greek Letters", color:"#283593", sym:"φ", name:"phi", tags:"greek angle golden ratio"},
+  {cat:"Greek Letters", color:"#283593", sym:"ω", name:"omega", tags:"greek angular velocity frequency"},
+  {cat:"Greek Letters", color:"#283593", sym:"λ", name:"lambda", tags:"greek wavelength eigenvalue"},
+  {cat:"Greek Letters", color:"#283593", sym:"μ", name:"mu", tags:"greek mean micro"},
+
+  // === COMPARISON & LOGIC ===
+  {cat:"Comparison", color:"#33691e", sym:"<", name:"less than", tags:"compare inequality smaller"},
+  {cat:"Comparison", color:"#33691e", sym:">", name:"greater than", tags:"compare inequality larger bigger"},
+  {cat:"Comparison", color:"#33691e", sym:"≤", name:"less than or equal", tags:"compare inequality"},
+  {cat:"Comparison", color:"#33691e", sym:"≥", name:"greater than or equal", tags:"compare inequality"},
+  {cat:"Comparison", color:"#33691e", sym:"≈", name:"approximately", tags:"compare about close nearly"},
+  {cat:"Comparison", color:"#33691e", sym:"≡", name:"identical to", tags:"compare congruent same"},
+  {cat:"Comparison", color:"#33691e", sym:"∈", name:"element of", tags:"set member belongs"},
+  {cat:"Comparison", color:"#33691e", sym:"⊂", name:"subset of", tags:"set contained"},
+  {cat:"Comparison", color:"#33691e", sym:"∪", name:"union", tags:"set combine or"},
+  {cat:"Comparison", color:"#33691e", sym:"∩", name:"intersection", tags:"set overlap and"},
+  {cat:"Comparison", color:"#33691e", sym:"∅", name:"empty set", tags:"set nothing null"},
+  {cat:"Comparison", color:"#33691e", sym:"∀", name:"for all", tags:"logic universal every"},
+  {cat:"Comparison", color:"#33691e", sym:"∃", name:"there exists", tags:"logic existential some"},
+  {cat:"Comparison", color:"#33691e", sym:"∴", name:"therefore", tags:"logic conclusion proof"},
+  {cat:"Comparison", color:"#33691e", sym:"if", name:"if / when", tags:"conditional logic"},
+
+  // === GROUPING ===
+  {cat:"Grouping", color:"#4e342e", sym:"(", name:"open parenthesis", tags:"group paren left"},
+  {cat:"Grouping", color:"#4e342e", sym:")", name:"close parenthesis", tags:"group paren right"},
+  {cat:"Grouping", color:"#4e342e", sym:"[", name:"open bracket", tags:"group bracket square left"},
+  {cat:"Grouping", color:"#4e342e", sym:"]", name:"close bracket", tags:"group bracket square right"},
+  {cat:"Grouping", color:"#4e342e", sym:"{", name:"open brace", tags:"group curly left set"},
+  {cat:"Grouping", color:"#4e342e", sym:"}", name:"close brace", tags:"group curly right set"},
+  {cat:"Grouping", color:"#4e342e", sym:"|x|", name:"absolute value", tags:"absolute magnitude distance"},
+  {cat:"Grouping", color:"#4e342e", sym:"| |", name:"evaluated at", tags:"evaluate bar boundary"},
+
+  // === PARAMETRIC & POLAR ===
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"r(θ)", name:"r of theta", tags:"polar function radius angle"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"x(t)", name:"x of t", tags:"parametric horizontal time"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"y(t)", name:"y of t", tags:"parametric vertical time"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"dy/dt", name:"dy over dt", tags:"parametric derivative vertical"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"dx/dt", name:"dx over dt", tags:"parametric derivative horizontal"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"ds", name:"arc length element", tags:"arc length differential parametric"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"r²", name:"r squared", tags:"polar radius squared area"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"½∫r²dθ", name:"polar area formula", tags:"polar area integral"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"r = cos θ", name:"r equals cos theta", tags:"polar curve circle"},
+  {cat:"Parametric & Polar", color:"#0277bd", sym:"r = sin θ", name:"r equals sin theta", tags:"polar curve circle"},
+
+  // === INTEGRATION TECHNIQUES ===
+  {cat:"Techniques", color:"#f9a825", sym:"by parts", name:"integration by parts", tags:"technique uv integral product"},
+  {cat:"Techniques", color:"#f9a825", sym:"u-sub", name:"u substitution", tags:"technique substitution change variable"},
+  {cat:"Techniques", color:"#f9a825", sym:"trig sub", name:"trig substitution", tags:"technique trigonometric substitution sqrt"},
+  {cat:"Techniques", color:"#f9a825", sym:"partial frac", name:"partial fractions", tags:"technique decomposition rational"},
+  {cat:"Techniques", color:"#f9a825", sym:"improper", name:"improper integral", tags:"technique infinite bound diverge converge"},
+  {cat:"Techniques", color:"#f9a825", sym:"L'Hôpital", name:"L'Hopital's rule", tags:"technique limit indeterminate hospital"},
+  {cat:"Techniques", color:"#f9a825", sym:"tabular", name:"tabular method", tags:"technique integration parts table repeated"},
+  {cat:"Techniques", color:"#f9a825", sym:"shells", name:"shell method", tags:"technique volume revolution cylindrical"},
+  {cat:"Techniques", color:"#f9a825", sym:"disks", name:"disk method", tags:"technique volume revolution circular"},
+  {cat:"Techniques", color:"#f9a825", sym:"washers", name:"washer method", tags:"technique volume revolution hollow"},
+
+  // === CONVERGENCE TESTS ===
+  {cat:"Convergence Tests", color:"#bf360c", sym:"ratio test", name:"ratio test", tags:"series convergence aₙ₊₁/aₙ limit"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"root test", name:"root test", tags:"series convergence nth root limit"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"integral test", name:"integral test", tags:"series convergence integral compare"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"comparison", name:"comparison test", tags:"series convergence compare larger smaller"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"limit comp", name:"limit comparison", tags:"series convergence compare limit ratio"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"alternating", name:"alternating series test", tags:"series convergence sign change leibniz"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"p-series", name:"p-series test", tags:"series convergence 1/nᵖ"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"geometric", name:"geometric series test", tags:"series convergence ratio common arⁿ"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"divergence", name:"divergence test", tags:"series diverge nth term zero"},
+  {cat:"Convergence Tests", color:"#bf360c", sym:"telescoping", name:"telescoping series", tags:"series collapse cancel partial fractions"},
+
+  // === ANSWER WORDS ===
+  {cat:"Answer Words", color:"#bf360c", sym:"converges", name:"converges", tags:"answer series limit finite"},
+  {cat:"Answer Words", color:"#bf360c", sym:"diverges", name:"diverges", tags:"answer series limit infinite"},
+  {cat:"Answer Words", color:"#bf360c", sym:"converges to", name:"converges to", tags:"answer series limit value"},
+  {cat:"Answer Words", color:"#bf360c", sym:"diverges to ∞", name:"diverges to infinity", tags:"answer series infinite"},
+  {cat:"Answer Words", color:"#bf360c", sym:"absolutely", name:"converges absolutely", tags:"answer series absolute value"},
+  {cat:"Answer Words", color:"#bf360c", sym:"conditionally", name:"converges conditionally", tags:"answer series not absolute"},
+  {cat:"Answer Words", color:"#bf360c", sym:"undefined", name:"undefined", tags:"answer no value"},
+  {cat:"Answer Words", color:"#bf360c", sym:"DNE", name:"does not exist", tags:"answer no limit"},
+  {cat:"Answer Words", color:"#bf360c", sym:"continuous", name:"continuous", tags:"answer function no break"},
+  {cat:"Answer Words", color:"#bf360c", sym:"discontinuous", name:"discontinuous", tags:"answer function break gap jump"},
+  {cat:"Answer Words", color:"#bf360c", sym:"increasing", name:"increasing", tags:"answer function positive derivative"},
+  {cat:"Answer Words", color:"#bf360c", sym:"decreasing", name:"decreasing", tags:"answer function negative derivative"},
+  {cat:"Answer Words", color:"#bf360c", sym:"maximum", name:"maximum", tags:"answer function max peak top"},
+  {cat:"Answer Words", color:"#bf360c", sym:"minimum", name:"minimum", tags:"answer function min valley bottom"},
+
+  // === QUICK PHRASES ===
+  {cat:"Quick Phrases", color:"#004d40", sym:"from 0 to 1", name:"from 0 to 1", tags:"bounds limits integral"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"from 0 to ∞", name:"from 0 to infinity", tags:"bounds limits integral improper"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"from 0 to π", name:"from 0 to pi", tags:"bounds limits integral trig"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"from 0 to 2π", name:"from 0 to 2 pi", tags:"bounds limits integral full circle"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"from −∞ to ∞", name:"from neg infinity to pos infinity", tags:"bounds limits integral both sides"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"from a to b", name:"from a to b", tags:"bounds limits integral general"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"from 1 to ∞", name:"from 1 to infinity", tags:"bounds limits integral improper"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"as n→∞", name:"as n approaches infinity", tags:"limit sequence series"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"as x→0", name:"as x approaches 0", tags:"limit function origin"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"as x→∞", name:"as x approaches infinity", tags:"limit function end behavior"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"as x→a", name:"as x approaches a", tags:"limit function point"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"n=1 to ∞", name:"n equals 1 to infinity", tags:"summation bounds series index"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"+ C", name:"plus C", tags:"constant integration indefinite"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"= 0", name:"equals zero", tags:"answer result"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"= 1", name:"equals one", tags:"answer result"},
+  {cat:"Quick Phrases", color:"#004d40", sym:"= ∞", name:"equals infinity", tags:"answer diverges"},
+];
+
+let pendingLibSym = null;
+
+function toggleLibrary() {
+  const overlay = document.getElementById('libraryOverlay');
+  overlay.classList.toggle('active');
+  if (overlay.classList.contains('active')) {
+    document.getElementById('libSearch').value = '';
+    renderLibrary(LIBRARY);
+    setTimeout(() => document.getElementById('libSearch').focus(), 100);
+  }
+}
+
+function filterLibrary() {
+  const query = document.getElementById('libSearch').value.toLowerCase().trim();
+  if (!query) {
+    renderLibrary(LIBRARY);
+    return;
+  }
+  const words = query.split(/\s+/);
+  const filtered = LIBRARY.filter(item => {
+    const searchable = (item.sym + ' ' + item.name + ' ' + item.tags + ' ' + item.cat).toLowerCase();
+    return words.every(w => searchable.includes(w));
+  });
+  renderLibrary(filtered);
+}
+
+function renderLibrary(items) {
+  const container = document.getElementById('libResults');
+  if (items.length === 0) {
+    container.innerHTML = '<div class="no-results">No symbols found. Try different search terms.</div>';
+    return;
+  }
+
+  // Group by category
+  const grouped = {};
+  items.forEach(item => {
+    if (!grouped[item.cat]) grouped[item.cat] = [];
+    grouped[item.cat].push(item);
+  });
+
+  let html = '';
+  for (const [catName, catItems] of Object.entries(grouped)) {
+    const color = catItems[0].color;
+    html += `<div class="lib-category-name" style="background:${color}">${catName}</div>`;
+    html += '<div class="lib-grid">';
+    catItems.forEach((item, idx) => {
+      html += `
+        <div class="lib-item" onclick="addFromLibrary('${escapeAttr(item.sym)}','${escapeAttr(item.name)}', event)">
+          <div class="lib-sym">${escapeHtml(item.sym)}</div>
+          <div class="lib-name">${escapeHtml(item.name)}</div>
+          <div class="lib-tags">${escapeHtml(item.tags)}</div>
+          <button class="lib-add-btn">+ Add to Board</button>
+        </div>`;
+    });
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function escapeAttr(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function addFromLibrary(sym, name, event) {
+  pendingLibSym = { s: sym.replace(/\\'/g, "'"), n: name.replace(/\\'/g, "'") };
+
+  const picker = document.getElementById('catPicker');
+  picker.innerHTML = '<div style="padding:4px 8px;font-size:0.7rem;color:#888;font-weight:600;">ADD TO WHICH SECTION?</div>';
+
+  boardData.forEach((cat, idx) => {
+    const opt = document.createElement('div');
+    opt.className = 'lib-cat-option';
+    opt.textContent = cat.name;
+    opt.style.borderLeft = `4px solid ${cat.color}`;
+    opt.onclick = function() {
+      boardData[idx].symbols.push({ s: pendingLibSym.s, n: pendingLibSym.n });
+      picker.classList.remove('active');
+      render();
+      // Show confirmation
+      const status = document.getElementById('exportStatus');
+      status.textContent = `✅ Added "${pendingLibSym.s}" (${pendingLibSym.n}) to ${cat.name}`;
+      status.style.display = 'block';
+      status.classList.add('active');
+      setTimeout(() => { status.style.display = 'none'; status.classList.remove('active'); }, 3000);
+    };
+    picker.appendChild(opt);
+  });
+
+  // Position near click
+  const rect = event.currentTarget.getBoundingClientRect();
+  picker.style.left = Math.min(rect.left, window.innerWidth - 250) + 'px';
+  picker.style.top = Math.min(rect.bottom + 4, window.innerHeight - 300) + 'px';
+  picker.classList.add('active');
+}
+
+// Close picker when clicking elsewhere
+document.addEventListener('click', function(e) {
+  const picker = document.getElementById('catPicker');
+  if (picker.classList.contains('active') && !picker.contains(e.target) && !e.target.closest('.lib-item')) {
+    picker.classList.remove('active');
+  }
+});
 
 // ========== MOVE SYMBOLS ==========
 function moveSymbol(catIdx, symIdx, direction) {
@@ -1080,7 +1750,8 @@ function exportPDF() {
 
 // ========== EXPORT / IMPORT ==========
 function exportJSON() {
-  const json = JSON.stringify(boardData, null, 2);
+  const exportData = { title: boardTitle, categories: boardData };
+  const json = JSON.stringify(exportData, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1105,13 +1776,21 @@ function importJSON(event) {
       if (Array.isArray(data)) {
         boardData = data;
         render();
-        const status = document.getElementById('exportStatus');
-        status.textContent = '✅ Board imported successfully!';
-        status.classList.add('active');
-        setTimeout(() => status.classList.remove('active'), 4000);
+      } else if (data.categories && Array.isArray(data.categories)) {
+        boardData = data.categories;
+        if (data.title) {
+          boardTitle = data.title;
+          saveTitle();
+        }
+        render();
       } else {
         alert('Invalid file format');
+        return;
       }
+      const status = document.getElementById('exportStatus');
+        status.textContent = '✅ Board imported successfully!';
+      status.classList.add('active');
+      setTimeout(() => status.classList.remove('active'), 4000);
     } catch (err) {
       alert('Error reading file: ' + err.message);
     }
