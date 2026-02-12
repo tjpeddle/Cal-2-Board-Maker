@@ -648,12 +648,14 @@
 
 <div class="export-status" id="exportStatus"></div>
 
+<div id="printContainer">
 <div class="board-title" id="boardTitleArea">
   <h1 class="title-text" id="boardTitle" onclick="editTitle()">CALCULUS 2 — AAC COMMUNICATION BOARD</h1>
   <button class="btn btn-small btn-outline title-edit-btn" onclick="editTitle()">✏️ Edit Title</button>
 </div>
 
 <div class="board" id="board"></div>
+</div>
 
 <!-- SYMBOL LIBRARY -->
 <div class="library-overlay" id="libraryOverlay">
@@ -1705,7 +1707,7 @@ function exportImages() {
 // ========== PDF EXPORT ==========
 function exportPDF() {
   // Hide all edit UI
-  const actions = document.querySelectorAll('.card-actions, .add-card, .cat-header-actions');
+  const actions = document.querySelectorAll('.card-actions, .add-card, .cat-header-actions, .move-arrows, .title-edit-btn');
   actions.forEach(el => el.style.display = 'none');
 
   const topbar = document.querySelector('.topbar');
@@ -1715,13 +1717,16 @@ function exportPDF() {
   instructions.style.display = 'none';
   exportStatus.style.display = 'none';
 
-  const board = document.getElementById('board');
+  // Make background white for PDF
+  document.body.style.background = 'white';
+
+  const container = document.getElementById('printContainer');
 
   const opt = {
-    margin: [10, 10, 10, 10],
+    margin: [10, 10, 15, 10],
     filename: 'Calc2_AAC_Communication_Board.pdf',
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
     jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
@@ -1731,10 +1736,20 @@ function exportPDF() {
   statusEl.textContent = '⏳ Generating PDF... please wait';
   statusEl.style.display = 'block';
 
-  html2pdf().set(opt).from(board).save().then(() => {
+  html2pdf().set(opt).from(container).toPdf().get('pdf').then(function(pdf) {
+    // Add page numbers
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(9);
+      pdf.setTextColor(150);
+      pdf.text('Page ' + i + ' of ' + totalPages, pdf.internal.pageSize.getWidth() - 25, pdf.internal.pageSize.getHeight() - 7);
+    }
+  }).save().then(() => {
     // Restore UI
     topbar.style.display = '';
     instructions.style.display = '';
+    document.body.style.background = '';
     actions.forEach(el => el.style.display = '');
     statusEl.textContent = '✅ PDF exported successfully!';
     statusEl.style.display = 'block';
@@ -1742,6 +1757,7 @@ function exportPDF() {
   }).catch(err => {
     topbar.style.display = '';
     instructions.style.display = '';
+    document.body.style.background = '';
     actions.forEach(el => el.style.display = '');
     statusEl.textContent = '❌ PDF export failed: ' + err.message;
     statusEl.style.display = 'block';
