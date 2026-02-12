@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculus 2 AAC Board Editor</title>
+<title>Board Editor</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
 
@@ -83,7 +83,7 @@
   /* BOARD TITLE */
   .board-title {
     max-width: 1200px;
-    margin: 16px auto 0;
+    margin: 12px auto 0;
     padding: 0 24px;
     display: flex;
     align-items: center;
@@ -91,14 +91,15 @@
   }
 
   .title-text {
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 1.6rem;
+    font-weight: 900;
     color: var(--text);
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 6px;
     border: 2px solid transparent;
     transition: all 0.2s;
+    letter-spacing: 0.02em;
   }
 
   .title-text:hover {
@@ -142,13 +143,13 @@
   .board {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 24px 60px;
+    padding: 0 24px 30px;
   }
 
   .category {
-    margin-top: 20px;
+    margin-top: 10px;
     background: var(--card);
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: var(--shadow);
     overflow: hidden;
   }
@@ -157,10 +158,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 8px 14px;
     color: white;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     letter-spacing: 0.03em;
   }
 
@@ -189,26 +190,26 @@
   }
 
   .cat-body {
-    padding: 12px;
+    padding: 8px;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     max-width: 100%;
   }
 
   /* SYMBOL CARD */
   .sym-card {
-    width: calc((100% - 40px) / 6);
+    width: calc((100% - 30px) / 6);
     min-width: 100px;
     border: 2px solid var(--border);
     border-radius: 8px;
-    padding: 10px 6px;
+    padding: 8px 4px;
     text-align: center;
     position: relative;
     background: #fafafa;
     transition: all 0.2s;
     cursor: grab;
-    min-height: 80px;
+    min-height: 70px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -243,19 +244,28 @@
 
   .sym-card .symbol {
     font-weight: 700;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    max-width: 95%;
-    overflow: hidden;
+    font-size: 1.4rem;
+    margin-bottom: 2px;
+    width: 100%;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: 1.1;
+    padding: 0 4px;
   }
 
   .sym-card .label {
     color: var(--text-dim);
-    line-height: 1.2;
-    white-space: nowrap;
-    max-width: 95%;
-    overflow: hidden;
+    line-height: 1.15;
+    font-size: 0.62rem;
+    width: 100%;
+    text-align: center;
     font-weight: 700;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+    padding: 0 2px;
   }
 
   .sym-card .move-arrows {
@@ -320,7 +330,7 @@
 
   /* ADD BUTTON */
   .add-card {
-    width: calc((100% - 40px) / 6);
+    width: calc((100% - 30px) / 6);
     min-width: 100px;
     border: 2px dashed #ccc;
     border-radius: 8px;
@@ -626,7 +636,7 @@
 
 <div class="topbar">
   <div>
-    <h1>Calculus 2 — AAC Board Editor</h1>
+    <h1>Board Editor</h1>
     <span class="counter" id="totalCount"></span>
   </div>
   <div class="topbar-actions">
@@ -634,6 +644,7 @@
     <button class="btn btn-outline" onclick="addCategory()">+ Add Section</button>
     <button class="btn btn-outline" onclick="window.print()">🖨 Print</button>
     <button class="btn btn-success" onclick="exportPDF()">📄 Export PDF</button>
+    <button class="btn btn-success" onclick="exportWord()">📝 Export Word</button>
     <button class="btn btn-success" onclick="exportImages()">🖼 Export Images</button>
     <button class="btn btn-success" onclick="exportJSON()">💾 Save JSON</button>
     <button class="btn btn-primary" onclick="document.getElementById('importInput').click()">📂 Import JSON</button>
@@ -651,7 +662,7 @@
 
 <div id="printContainer">
 <div class="board-title" id="boardTitleArea">
-  <h1 class="title-text" id="boardTitle" onclick="editTitle()">CALCULUS 2 — AAC COMMUNICATION BOARD</h1>
+  <h1 class="title-text" id="boardTitle" onclick="editTitle()">CALCULUS — AAC COMMUNICATION BOARD</h1>
   <button class="btn btn-small btn-outline title-edit-btn" onclick="editTitle()">✏️ Edit Title</button>
 </div>
 
@@ -717,6 +728,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
 <script>
 // ========== DATA ==========
 let boardData = [
@@ -898,21 +910,15 @@ function render() {
       card.addEventListener('drop', handleDrop);
       card.addEventListener('dragend', handleDragEnd);
 
-      // Auto-size symbol text
-      let symFontSize = 1.4;
-      if (sym.s.length > 12) symFontSize = 0.7;
-      else if (sym.s.length > 9) symFontSize = 0.85;
-      else if (sym.s.length > 6) symFontSize = 1.0;
-      else if (sym.s.length > 4) symFontSize = 1.15;
-
-      // Auto-size label text
-      let lblFontSize = 0.65;
-      if (sym.n.length > 22) lblFontSize = 0.48;
-      else if (sym.n.length > 16) lblFontSize = 0.52;
-      else if (sym.n.length > 12) lblFontSize = 0.58;
-
       const isFirst = symIdx === 0;
       const isLast = symIdx === cat.symbols.length - 1;
+
+      // Only scale down the SYMBOL font if it's a long word/phrase
+      let symStyle = '';
+      const len = sym.s.length;
+      if (len > 10) symStyle = 'font-size:0.85rem';
+      else if (len > 7) symStyle = 'font-size:1.0rem';
+      else if (len > 5) symStyle = 'font-size:1.15rem';
 
       card.innerHTML = `
         <div class="card-accent" style="background:${cat.color}"></div>
@@ -920,8 +926,8 @@ function render() {
           <button class="icon-btn edit" onclick="editSymbol(${catIdx},${symIdx})" title="Edit">✏</button>
           <button class="icon-btn delete" onclick="deleteSymbol(${catIdx},${symIdx})" title="Delete">✕</button>
         </div>
-        <div class="symbol" style="font-size:${symFontSize}rem">${escapeHtml(sym.s)}</div>
-        <div class="label" style="font-size:${lblFontSize}rem">${escapeHtml(sym.n)}</div>
+        <div class="symbol" ${symStyle ? `style="${symStyle}"` : ''}>${escapeHtml(sym.s)}</div>
+        <div class="label">${escapeHtml(sym.n)}</div>
         <div class="move-arrows">
           <button class="arrow-btn" onclick="moveSymbol(${catIdx},${symIdx},-1)" title="Move left" ${isFirst ? 'disabled style="opacity:0.3"' : ''}>◀</button>
           <button class="arrow-btn" onclick="moveSymbol(${catIdx},${symIdx},1)" title="Move right" ${isLast ? 'disabled style="opacity:0.3"' : ''}>▶</button>
@@ -949,7 +955,7 @@ function escapeHtml(str) {
 }
 
 // ========== BOARD TITLE ==========
-let boardTitle = "CALCULUS 2 — AAC COMMUNICATION BOARD";
+let boardTitle = "CALCULUS — AAC COMMUNICATION BOARD";
 
 function editTitle() {
   const titleArea = document.getElementById('boardTitleArea');
@@ -965,7 +971,7 @@ function editTitle() {
 function saveTitle() {
   const input = document.getElementById('titleInput');
   if (input) {
-    boardTitle = input.value.trim() || "CALCULUS 2 — AAC COMMUNICATION BOARD";
+    boardTitle = input.value.trim() || "CALCULUS — AAC COMMUNICATION BOARD";
   }
   const titleArea = document.getElementById('boardTitleArea');
   titleArea.innerHTML = `
@@ -1697,12 +1703,188 @@ function exportImages() {
 
   // Generate zip
   zip.generateAsync({ type: 'blob' }).then(function(content) {
-    saveAs(content, 'Calc2_AAC_Symbol_Images.zip');
+    saveAs(content, 'AAC_Symbol_Images.zip');
     statusEl.textContent = `✅ ${totalImages} images exported in zip! Organized by category + ALL_FLAT folder.`;
     setTimeout(() => { statusEl.style.display = 'none'; statusEl.classList.remove('active'); }, 5000);
   }).catch(function(err) {
     statusEl.textContent = '❌ Image export failed: ' + err.message;
   });
+}
+
+// ========== WORD EXPORT ==========
+function exportWord() {
+  const statusEl = document.getElementById('exportStatus');
+  statusEl.textContent = '⏳ Generating Word document...';
+  statusEl.style.display = 'block';
+  statusEl.classList.add('active');
+
+  try {
+    const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+            AlignmentType, WidthType, BorderStyle, ShadingType, Header, Footer,
+            PageNumber, HeadingLevel, TableLayoutType } = docx;
+
+    const COLS = 6;
+    const PAGE_WIDTH = 10800; // US Letter with 0.5" margins in DXA
+    const COL_WIDTH = Math.floor(PAGE_WIDTH / COLS);
+    const noBorder = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
+    const noBorders = { top: noBorder, bottom: noBorder, left: noBorder, right: noBorder };
+    const cellBorder = { style: BorderStyle.SINGLE, size: 1, color: "D0D0D0" };
+    const cellBorders = { top: cellBorder, bottom: cellBorder, left: cellBorder, right: cellBorder };
+
+    function hexClean(hex) {
+      return hex.replace('#', '').toUpperCase();
+    }
+
+    const children = [];
+
+    // Title — big and bold
+    children.push(new Paragraph({
+      alignment: AlignmentType.LEFT,
+      spacing: { after: 200 },
+      children: [new TextRun({ text: boardTitle, bold: true, size: 40, font: "Arial" })]
+    }));
+
+    // Thin separator line under title
+    children.push(new Paragraph({
+      spacing: { after: 120 },
+      border: { bottom: { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC", space: 4 } },
+      children: []
+    }));
+
+    // Build each category
+    boardData.forEach(cat => {
+      const catColor = hexClean(cat.color);
+
+      // Category header
+      children.push(new Table({
+        width: { size: PAGE_WIDTH, type: WidthType.DXA },
+        columnWidths: [PAGE_WIDTH],
+        rows: [new TableRow({
+          children: [new TableCell({
+            borders: noBorders,
+            width: { size: PAGE_WIDTH, type: WidthType.DXA },
+            shading: { fill: catColor, type: ShadingType.CLEAR },
+            margins: { top: 50, bottom: 50, left: 120, right: 120 },
+            children: [new Paragraph({
+              children: [new TextRun({ text: cat.name, bold: true, color: "FFFFFF", size: 20, font: "Arial" })]
+            })]
+          })]
+        })]
+      }));
+
+      children.push(new Paragraph({ spacing: { before: 40, after: 0 }, children: [] }));
+
+      // Symbol grid
+      const rows = [];
+      for (let i = 0; i < cat.symbols.length; i += COLS) {
+        const rowCells = [];
+        for (let j = 0; j < COLS; j++) {
+          const idx = i + j;
+          if (idx < cat.symbols.length) {
+            const sym = cat.symbols[idx];
+
+            // Auto-size symbol font
+            let symSize = 28;
+            if (sym.s.length > 12) symSize = 16;
+            else if (sym.s.length > 10) symSize = 18;
+            else if (sym.s.length > 7) symSize = 20;
+            else if (sym.s.length > 5) symSize = 22;
+
+            // Auto-size label font
+            let lblSize = 13;
+            if (sym.n.length > 22) lblSize = 9;
+            else if (sym.n.length > 16) lblSize = 10;
+            else if (sym.n.length > 12) lblSize = 11;
+
+            // Use top border as the color accent bar
+            const accentBorders = {
+              top: { style: BorderStyle.SINGLE, size: 6, color: catColor },
+              bottom: cellBorder,
+              left: cellBorder,
+              right: cellBorder
+            };
+
+            rowCells.push(new TableCell({
+              borders: accentBorders,
+              width: { size: COL_WIDTH, type: WidthType.DXA },
+              shading: { fill: "FAFAFA", type: ShadingType.CLEAR },
+              margins: { top: 50, bottom: 50, left: 30, right: 30 },
+              children: [
+                // Symbol
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 20, after: 20 },
+                  children: [new TextRun({ text: sym.s, bold: true, size: symSize, font: "Arial" })]
+                }),
+                // Label
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  spacing: { before: 0, after: 0 },
+                  children: [new TextRun({ text: sym.n, bold: true, size: lblSize, color: "555555", font: "Arial" })]
+                })
+              ]
+            }));
+          } else {
+            // Empty cell — completely invisible
+            rowCells.push(new TableCell({
+              borders: noBorders,
+              width: { size: COL_WIDTH, type: WidthType.DXA },
+              shading: { fill: "FFFFFF", type: ShadingType.CLEAR },
+              children: [new Paragraph({ children: [] })]
+            }));
+          }
+        }
+        rows.push(new TableRow({ children: rowCells }));
+      }
+
+      children.push(new Table({
+        width: { size: PAGE_WIDTH, type: WidthType.DXA },
+        columnWidths: Array(COLS).fill(COL_WIDTH),
+        rows: rows
+      }));
+
+      // Space between categories
+      children.push(new Paragraph({ spacing: { before: 80, after: 0 }, children: [] }));
+    });
+
+    const doc = new Document({
+      styles: {
+        default: { document: { run: { font: "Arial", size: 24 } } }
+      },
+      sections: [{
+        properties: {
+          page: {
+            size: { width: 12240, height: 15840 },
+            margin: { top: 720, right: 720, bottom: 720, left: 720 }
+          }
+        },
+        footers: {
+          default: new Footer({
+            children: [new Paragraph({
+              alignment: AlignmentType.RIGHT,
+              children: [
+                new TextRun({ text: "Page ", size: 16, color: "999999", font: "Arial" }),
+                new TextRun({ children: [PageNumber.CURRENT], size: 16, color: "999999", font: "Arial" }),
+                new TextRun({ text: " of ", size: 16, color: "999999", font: "Arial" }),
+                new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 16, color: "999999", font: "Arial" })
+              ]
+            })]
+          })
+        },
+        children: children
+      }]
+    });
+
+    Packer.toBlob(doc).then(blob => {
+      saveAs(blob, "AAC_Communication_Board.docx");
+      statusEl.textContent = '✅ Word document exported!';
+      setTimeout(() => { statusEl.style.display = 'none'; statusEl.classList.remove('active'); }, 4000);
+    });
+
+  } catch(err) {
+    statusEl.textContent = '❌ Word export failed: ' + err.message;
+    console.error(err);
+  }
 }
 
 // ========== PDF EXPORT ==========
@@ -1724,8 +1906,8 @@ function exportPDF() {
   const container = document.getElementById('printContainer');
 
   const opt = {
-    margin: [10, 10, 15, 10],
-    filename: 'Calc2_AAC_Communication_Board.pdf',
+    margin: [6, 6, 12, 6],
+    filename: 'AAC_Communication_Board.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
     jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
