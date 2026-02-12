@@ -147,11 +147,13 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    max-width: 100%;
   }
 
   /* SYMBOL CARD */
   .sym-card {
-    width: 120px;
+    width: calc((100% - 40px) / 6);
+    min-width: 100px;
     border: 2px solid var(--border);
     border-radius: 8px;
     padding: 10px 6px;
@@ -188,7 +190,7 @@
     font-weight: 700;
     margin-bottom: 4px;
     white-space: nowrap;
-    max-width: 110px;
+    max-width: 95%;
     overflow: hidden;
   }
 
@@ -196,7 +198,7 @@
     color: var(--text-dim);
     line-height: 1.2;
     white-space: nowrap;
-    max-width: 110px;
+    max-width: 95%;
     overflow: hidden;
   }
 
@@ -262,7 +264,8 @@
 
   /* ADD BUTTON */
   .add-card {
-    width: 120px;
+    width: calc((100% - 40px) / 6);
+    min-width: 100px;
     border: 2px dashed #ccc;
     border-radius: 8px;
     padding: 10px 6px;
