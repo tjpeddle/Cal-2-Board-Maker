@@ -159,7 +159,24 @@
     position: relative;
     background: #fafafa;
     transition: all 0.2s;
-    cursor: default;
+    cursor: grab;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .sym-card.dragging {
+    opacity: 0.4;
+    border-color: var(--accent);
+  }
+
+  .sym-card.drag-over {
+    border-color: var(--accent);
+    background: #eff6ff;
+    box-shadow: 0 0 0 2px var(--accent);
   }
 
   .sym-card:hover {
@@ -168,17 +185,50 @@
   }
 
   .sym-card .symbol {
-    font-size: 1.4rem;
     font-weight: 700;
     margin-bottom: 4px;
-    word-break: break-all;
+    white-space: nowrap;
+    max-width: 110px;
+    overflow: hidden;
   }
 
   .sym-card .label {
-    font-size: 0.65rem;
     color: var(--text-dim);
     line-height: 1.2;
+    white-space: nowrap;
+    max-width: 110px;
+    overflow: hidden;
   }
+
+  .sym-card .move-arrows {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 2px;
+  }
+
+  .sym-card:hover .move-arrows {
+    display: flex;
+  }
+
+  .arrow-btn {
+    width: 20px;
+    height: 18px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e0e7ff;
+    color: var(--accent);
+    transition: all 0.15s;
+  }
+
+  .arrow-btn:hover { background: var(--accent); color: white; }
 
   .sym-card .card-actions {
     position: absolute;
@@ -580,13 +630,45 @@ function render() {
       total++;
       const card = document.createElement('div');
       card.className = 'sym-card';
+      card.draggable = true;
+      card.dataset.catIdx = catIdx;
+      card.dataset.symIdx = symIdx;
+
+      // Drag events
+      card.addEventListener('dragstart', handleDragStart);
+      card.addEventListener('dragover', handleDragOver);
+      card.addEventListener('dragenter', handleDragEnter);
+      card.addEventListener('dragleave', handleDragLeave);
+      card.addEventListener('drop', handleDrop);
+      card.addEventListener('dragend', handleDragEnd);
+
+      // Auto-size symbol text
+      let symFontSize = 1.4;
+      if (sym.s.length > 12) symFontSize = 0.7;
+      else if (sym.s.length > 9) symFontSize = 0.85;
+      else if (sym.s.length > 6) symFontSize = 1.0;
+      else if (sym.s.length > 4) symFontSize = 1.15;
+
+      // Auto-size label text
+      let lblFontSize = 0.65;
+      if (sym.n.length > 22) lblFontSize = 0.48;
+      else if (sym.n.length > 16) lblFontSize = 0.52;
+      else if (sym.n.length > 12) lblFontSize = 0.58;
+
+      const isFirst = symIdx === 0;
+      const isLast = symIdx === cat.symbols.length - 1;
+
       card.innerHTML = `
         <div class="card-actions">
           <button class="icon-btn edit" onclick="editSymbol(${catIdx},${symIdx})" title="Edit">✏</button>
           <button class="icon-btn delete" onclick="deleteSymbol(${catIdx},${symIdx})" title="Delete">✕</button>
         </div>
-        <div class="symbol">${escapeHtml(sym.s)}</div>
-        <div class="label">${escapeHtml(sym.n)}</div>
+        <div class="symbol" style="font-size:${symFontSize}rem">${escapeHtml(sym.s)}</div>
+        <div class="label" style="font-size:${lblFontSize}rem">${escapeHtml(sym.n)}</div>
+        <div class="move-arrows">
+          <button class="arrow-btn" onclick="moveSymbol(${catIdx},${symIdx},-1)" title="Move left" ${isFirst ? 'disabled style="opacity:0.3"' : ''}>◀</button>
+          <button class="arrow-btn" onclick="moveSymbol(${catIdx},${symIdx},1)" title="Move right" ${isLast ? 'disabled style="opacity:0.3"' : ''}>▶</button>
+        </div>
       `;
       body.appendChild(card);
     });
@@ -607,6 +689,66 @@ function render() {
 
 function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ========== MOVE SYMBOLS ==========
+function moveSymbol(catIdx, symIdx, direction) {
+  const newIdx = symIdx + direction;
+  if (newIdx < 0 || newIdx >= boardData[catIdx].symbols.length) return;
+  const symbols = boardData[catIdx].symbols;
+  const temp = symbols[symIdx];
+  symbols[symIdx] = symbols[newIdx];
+  symbols[newIdx] = temp;
+  render();
+}
+
+// ========== DRAG AND DROP ==========
+let dragSrcCatIdx = null;
+let dragSrcSymIdx = null;
+
+function handleDragStart(e) {
+  this.classList.add('dragging');
+  dragSrcCatIdx = parseInt(this.dataset.catIdx);
+  dragSrcSymIdx = parseInt(this.dataset.symIdx);
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter(e) {
+  e.preventDefault();
+  this.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  e.stopPropagation();
+  this.classList.remove('drag-over');
+
+  const destCatIdx = parseInt(this.dataset.catIdx);
+  const destSymIdx = parseInt(this.dataset.symIdx);
+
+  if (dragSrcCatIdx === destCatIdx && dragSrcSymIdx === destSymIdx) return;
+
+  // Remove from source
+  const sym = boardData[dragSrcCatIdx].symbols.splice(dragSrcSymIdx, 1)[0];
+
+  // Insert at destination
+  boardData[destCatIdx].symbols.splice(destSymIdx, 0, sym);
+
+  render();
+}
+
+function handleDragEnd(e) {
+  document.querySelectorAll('.sym-card').forEach(c => {
+    c.classList.remove('dragging', 'drag-over');
+  });
 }
 
 // ========== SYMBOL OPERATIONS ==========
